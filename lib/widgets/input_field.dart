@@ -4,26 +4,27 @@ import 'package:intl/intl.dart';
 class NumberTextField extends StatefulWidget {
   final Color color;
   final double width;
+  final TextEditingController textController;
 
-  NumberTextField({required this.color, required this.width});
+  NumberTextField({required this.color, required this.width, required this.textController});
 
   @override
   _NumberTextFieldState createState() => _NumberTextFieldState();
 }
 
 class _NumberTextFieldState extends State<NumberTextField> {
-  final TextEditingController _controller = TextEditingController();
+
   final NumberFormat _formatter = NumberFormat('#,###');
 
   @override
   void initState() {
     super.initState();
-    _controller.addListener(() {
-      final text = _controller.text.replaceAll(',', '');
+    widget.textController.addListener(() {
+      final text = widget.textController.text.replaceAll(',', '');
       try {
         final int number = int.parse(text.isEmpty ? '0' : text);
         final formattedText = _formatter.format(number);
-        _controller.value = _controller.value.copyWith(
+        widget.textController.value = widget.textController.value.copyWith(
           text: formattedText,
           selection: TextSelection.collapsed(offset: formattedText.length),
         );
@@ -40,7 +41,7 @@ class _NumberTextFieldState extends State<NumberTextField> {
       height: 50,
       decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(10),),
       child: TextField(
-        controller: _controller,
+        controller: widget.textController,
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         style: TextStyle(fontSize: 14),
@@ -54,11 +55,5 @@ class _NumberTextFieldState extends State<NumberTextField> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }
